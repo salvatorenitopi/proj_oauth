@@ -1,0 +1,63 @@
+{{alert}}
+
+{{#if oauth}}
+	<script type="text/javascript">
+
+		function fx_login_credentials_grant (){
+
+			var grant_type = "client_credentials"
+			var client_id = "root_app"
+			var client_secret = "99adc231b045331e514a516b4b7680f588e3823213abe901738bc3ad67b2f6fcb3c64efb93d18002588d3ccc1a49efbae1ce20cb43df36b38651f11fa75678e8"
+			var scope = "basic,read,write"
+
+			$.ajax({
+				type: 'POST',
+				data: { "grant_type": grant_type, 'client_id': client_id, 'client_secret': client_secret, 'scope': scope },
+				url: '/oauth/token'
+			})
+			.done(function(data, err) {
+					
+				var jdata = JSON.parse(data)
+				if (jdata.status == "error"){
+					alert("ERRORE: " + jdata.message);
+
+				} else {
+					window.location.replace("/private/dashboard?access_token=" + jdata.access_token);
+				}
+			
+			})
+			.fail(function(err) {
+				alert("ERRORE durante il login tramite Oauth credentials_grant");
+			})
+
+		}
+	</script>
+{{/if}}
+
+<div class="container-fluid">
+
+	<div class="row justify-content-md-center">
+		<div class="col col-lg-4">
+			<div class="cardboard">
+
+				<form method="post" action="/login">
+					<div class="form-group">
+						<label for="username">Username</label>
+						<input type="text" class="form-control" id="username" name="username" placeholder="Enter username">
+					</div>
+					<div class="form-group">
+						<label for="password">Password</label>
+						<input type="password" class="form-control" id="password" name="password" placeholder="Password">
+					</div>
+					<input type="hidden" name="next" value="{{hidden_input}}">
+					<button type="submit" class="btn btn-primary">Submit</button>
+
+					{{#if oauth}}
+						<button type="button" class="btn btn-primary" onClick="fx_login_credentials_grant()">Oauth Credentials Grant</button>
+					{{/if}}
+
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

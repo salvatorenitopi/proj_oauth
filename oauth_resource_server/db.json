@@ -1,0 +1,14 @@
+{
+  "resources": [
+    {
+      "owner": "user",
+      "key": "username",
+      "valore": "sadasd"
+    },
+    {
+      "owner": "user",
+      "key": "protected_resource",
+      "valore": "asdasd"
+    }
+  ]
+}

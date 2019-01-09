@@ -1,0 +1,36 @@
+{{alert}}
+
+
+<script type="text/javascript">
+
+	function fx_login (){
+		window.location.replace("{{{authorize_url}}}");
+	}
+
+</script>
+
+
+<div class="container-fluid">
+
+	<div class="row justify-content-md-center">
+		<div class="col col-lg-4">
+			<div class="cardboard">
+
+				<h2 class="red-text text-center">Client 1</h2>
+				<br>
+				
+				<p class="text-justify">
+					Questa è una webapp di test che implementa l'autenticazione oauth2 di tipo authorization_code.
+				</p>
+
+				<p class="text-justify">
+					Cliccare sul bottone sottostante per eseguire l'autenticazione.
+				</p>
+				
+				<button type="button" class="btn btn-primary" id="login_btn" name="login_btn" value="login" onClick="fx_login()">Login con oauth2</button>
+
+
+			</div>
+		</div>
+	</div>
+</div>

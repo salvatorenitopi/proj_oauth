@@ -1,0 +1,52 @@
+{{alert}}
+
+<div class="container-fluid">
+	<div class="row justify-content-md-center">
+
+		<div id="users_div" class="col col-lg-6">
+			<div class="cardboard">
+				
+				<p>L'applicazione <b>{{client_name}}</b> sta richedendo i seguenti permessi:</p>
+				<hr>
+				
+				{{{request_permission}}}
+
+				<br>
+
+				<button type="button" class="btn btn-success" id="auth_btn" name="auth_btn" value="allow" onClick="fx_grant()">Permetti</button>
+				<button type="button" class="btn btn-danger" id="auth_btn" name="auth_btn" value="deny" onClick="fx_deny()">Nega</button>
+				
+
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+	function fx_grant (){
+		var customizable = {{{customizable}}};
+
+		if (customizable == true){
+			var s_basic = document.getElementById("scope_basic")
+			var s_read = document.getElementById("scope_read")
+			var s_write = document.getElementById("scope_write")
+
+			var scope = ""
+			if (s_basic && s_basic.checked) scope += "basic,";
+			if (s_read && s_read.checked) scope += "read,";
+			if (s_write && s_write.checked) scope += "write";
+
+			window.location.replace ("{{{callback_url}}}" + scope);
+		} else {
+		
+			window.location.replace ("{{{callback_url}}}");
+		}
+		
+	}
+
+	function fx_deny () {
+		window.history.back();
+	}
+
+</script>

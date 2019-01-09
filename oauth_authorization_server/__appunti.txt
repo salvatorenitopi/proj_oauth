@@ -1,0 +1,42 @@
+authorization_code_grant
+
+	1) client chiama [server]/oauth/authorize:
+		response_type=code		->	Il tipo di riposta che il client si aspetta (definisce il flow)
+		client_id				-> 	ID del client
+		redirect_uri			->	L'url di callback del client (non usato nel flow client_credentials)
+		scope					->	scope
+		state					->	Stringa utilizzata come nonce dal client
+
+
+
+implicit_grant		(authorization_code_grant semplificato)
+
+	1) client chiama [server]/oauth/authorize:
+		response_type=token		->	Il tipo di riposta che il client si aspetta (definisce il flow)
+		client_id				-> 	ID del client
+		redirect_uri			->	L'url di callback del client (non usato nel flow client_credentials)
+		scope					->	scope
+
+
+
+resource_owner_password_credentials_grant
+
+	1) client chiama [server]/oauth/authorize:
+		response_type=password		->	Il tipo di riposta che il client si aspetta (definisce il flow)
+		client_id					-> 	ID del client
+		client_secret				->	SECRET del client
+		redirect_uri				->	L'url di callback del client (non usato nel flow client_credentials)
+		username					->	username
+		password					->	password
+
+
+
+client_credentials_grant
+
+	1) client chiama [server]/oauth/token:
+		grant_type=client_credentials			->	Il tipo di riposta che il client si aspetta (definisce il flow)
+		client_id								-> 	ID del client
+		client_secret							->	SECRET del client
+		scope									->	scope
+
+	2) Il client riceve il token.

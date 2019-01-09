@@ -1,0 +1,346 @@
+{{alert}}
+<div class="container-fluid">
+
+	<div class="row justify-content-md-center">
+		<div class="col col-6">
+			<div class="cardboard">
+
+				<h5>Info utente qui</h5><hr>
+
+				<div class="form-group row">
+					<label for="username_box" class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label"><b>Nome utente: </b></label>
+					<div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+						<input type="test" class="form-control" id="username_box" disabled>
+					</div>
+				</div>
+
+				<div class="form-group row">
+					<label for="password_box" class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label"><b>Password: </b></label>
+					<div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+						<input type="password" class="form-control" id="password_box">
+					</div>
+				</div>
+
+				<div class="form-group row">
+					<label for="email_box" class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label"><b>E-mail: </b></label>
+					<div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+						<input type="email" class="form-control" id="email_box">
+					</div>
+				</div>
+
+				<button type="button" class="btn btn-primary" id="user_info_update_btn" onClick="fx_update_user_info()">Aggiorna</button>
+
+			</div>
+		</div>
+
+
+		<div class="col col-6">
+			<div class="cardboard">
+
+				<h5>Aggiungi client</h5><hr>
+
+				<div class="form-group row">
+					<label for="client_name_box" class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label"><b>Client Nome: </b></label>
+					<div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+						<input type="test" class="form-control" id="client_name_box">
+					</div>
+				</div>
+
+				<div class="form-group row">
+					<label for="client_id_box" class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label"><b>Client ID: </b></label>
+					<div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+						<input type="text" class="form-control" id="client_id_box">
+					</div>
+				</div>
+
+				<div class="form-group row">
+					<label for="client_secret_box" class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label"><b>Secret ID: </b></label>
+					<div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+						<input type="test" class="form-control" id="client_secret_box">
+					</div>
+				</div>
+
+				<div class="form-group row">
+					<label for="client_secret_box" class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label"><b>Secret ID: </b></label>
+					<div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+						<select class="form-control" id="grant_type_box">
+							<option>authorization_code</option>
+							<option>implicit</option>
+							<option>password</option>
+							<option>client_credentials</option>
+						</select>
+					</div>
+				</div>
+
+				<button type="button" class="btn btn-primary" id="client_add_btn" onClick="fx_add_client()">Aggiungi</button>
+
+			</div>
+		</div>
+
+
+		<div class="col col-6">
+			<div class="cardboard">
+
+				<h5>Client autorizzati dall'utente</h5><hr>
+
+				<div id="authorizations_list_div"></div>
+
+			</div>
+		</div>
+
+		<div class="col col-6">
+			<div class="cardboard">
+
+				<h5>Client registrati dall'utente</h5><hr>
+
+				<div id="applications_list_div"></div>
+
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<script type="text/javascript">
+
+	function fx_update_user_info (){
+
+		var username = document.getElementById("username_box").value
+		var password = document.getElementById("password_box").value
+		var email = document.getElementById("email_box").value
+
+		$.ajax({
+			type: 'POST',
+			data: { 'username': username, 'password': password, 'email': email },
+			url: '/private/update_user_info'
+		})
+		.done(function(data, err) {
+			
+			var jdata = JSON.parse(data)
+			if (jdata.status == "ok"){
+				alert("Informazioni utente aggiornate");
+
+			} else {
+				alert("ERRORE: " + jdata.message);
+			}
+		
+		})
+		.fail(function(err) {
+			alert("ERRORE durante l'aggiornamento delle informazioni utente");
+		})
+
+		location.reload();
+	}
+
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+	function fx_remove_client (cccc){
+
+		$.ajax({
+			type: 'POST',
+			data: 'client_id=' + cccc,
+			url: '/private/remove_client'
+		})
+		.done(function(data, err) {
+		
+			var jdata = JSON.parse(data)
+			if (jdata.status == "ok"){
+				alert("Rimossa applicazione: " + cccc);
+
+			} else {
+				alert("ERRORE: " + jdata.message);
+			}
+		
+		})
+		.fail(function(err) {
+			alert("ERRORE durante la rimozione di: " + cccc);
+		})
+
+		location.reload();
+	}
+
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+	function fx_add_client (){
+
+		var client_name = document.getElementById("client_name_box").value
+		var client_id = document.getElementById("client_id_box").value
+		var client_secret = document.getElementById("client_secret_box").value
+		var grant_type = document.getElementById("grant_type_box").value
+
+		$.ajax({
+			type: 'POST',
+			data: { 'client_name': client_name, 'client_id': client_id, 'client_secret': client_secret, 'grant_type': grant_type},
+			url: '/private/add_client'
+		})
+		.done(function(data, err) {
+		
+			var jdata = JSON.parse(data)
+			if (jdata.status == "ok"){
+				alert("Aggiunta applicazione: " + client_id);
+
+			} else {
+				alert("ERRORE: " + jdata.message);
+			}
+		
+		})
+		.fail(function(err) {
+			alert("ERRORE durante l'aggiunta del client");
+		})
+
+		location.reload();
+	}
+
+	function fx_remove_authorization (aaaa){
+
+		$.ajax({
+			type: 'POST',
+			data: 'auth_id=' + aaaa,
+			url: '/private/remove_authorization'
+		})
+		.done(function(data, err) {
+		
+			var jdata = JSON.parse(data)
+			if (jdata.status == "ok"){
+				alert("Rimossa autorizzazione: " + aaaa);
+
+			} else {
+				alert("ERRORE: " + jdata.message);
+			}
+		
+		})
+		.fail(function(err) {
+			alert("ERRORE durante la rimozione di: " + aaaa);
+		})
+
+		location.reload();
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+
+	function timeConverter(UNIX_timestamp){
+		var a = new Date(UNIX_timestamp * 1000);
+		var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+		var year = a.getFullYear();
+		var month = months[a.getMonth()];
+		var date = a.getDate();
+		var hour = a.getHours();
+		var min = a.getMinutes();
+		var sec = a.getSeconds();
+		var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+		return time;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	
+	var json_payload = '{{{json_payload}}}';
+
+	var j = JSON.parse(json_payload);
+
+	// DIV info utente
+	document.getElementById("username_box").value = j['user_info']['username'];
+	document.getElementById("password_box").value = j['user_info']['password'];
+	document.getElementById("email_box").value = j['user_info']['email'];
+
+	// DIV autorizzazioni
+	var auth_array = j['user_authorizations']
+	var authorizations_list_div = document.getElementById("authorizations_list_div")
+	for (var i = 0; i < auth_array.length; i++) {
+		authorizations_list_div.innerHTML += `
+
+			<div style="border-style: solid; border-width: 1px; border-radius: 5px; padding:15px; border-color: gray; margin-bottom:15px">
+				<div class="form-group row">
+					<div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+						<p><b>Auth ID: </b></p>
+					</div>
+					<div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+						<p>` + auth_array[i]['auth_id'] + `</p>
+					</div>
+				</div>
+
+				<div class="form-group row">
+					<div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+						<p><b>Client ID: </b></p>
+					</div>
+					<div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+						<p>` + auth_array[i]['client_id'] + `</p>
+					</div>
+				</div>
+				
+				<div class="form-group row">
+					<div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+						<p><b>Scope: </b></p>
+					</div>
+					<div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+						<p>` + auth_array[i]['scope'] + `</p>
+					</div>
+				</div>
+
+				<div class="form-group row">
+					<div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+						<p><b>Scade: </b></p>
+					</div>
+					<div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+						<p>` + timeConverter(auth_array[i]['expire_at']) + `</p>
+					</div>
+				</div>
+				
+				<button type="button" class="btn btn-danger" id="` + auth_array[i]['auth_id'] + `_remove_btn" onClick="fx_remove_authorization(\'` + auth_array[i]['auth_id'] + `\')">Rimuovi</button>
+			</div>
+			`
+	}
+
+	// DIV applicazioni
+	var app_array = j['user_applications']
+	var applications_list_div = document.getElementById("applications_list_div")
+	for (var i = 0; i < app_array.length; i++) {
+		applications_list_div.innerHTML += `
+
+			<div style="border-style: solid; border-width: 1px; border-radius: 5px; padding:15px; border-color: gray; margin-bottom:15px">
+				<div class="form-group row">
+					<div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+						<p><b>Client Nome: </b></p>
+					</div>
+					<div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+						<p>` + app_array[i]['client_name'] + `</p>
+					</div>
+				</div>
+				
+				<div class="form-group row">
+					<div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+						<p><b>Client ID: </b></p>
+					</div>
+					<div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+						<p>` + app_array[i]['client_id'] + `</p>
+					</div>
+				</div>
+				
+				<div class="form-group row">
+					<div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+						<p><b>Secret ID: </b></p>
+					</div>
+					<div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+						<p>` + app_array[i]['client_secret'] + `</p>
+					</div>
+				</div>
+
+				<div class="form-group row">
+					<div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+						<p><b>Grant Type: </b></p>
+					</div>
+					<div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+						<p>` + app_array[i]['grant_type'] + `</p>
+					</div>
+				</div>
+				
+				<button type="button" class="btn btn-danger" id="` + app_array[i]['client_id'] + `_remove_btn" onClick="fx_remove_client(\'` + app_array[i]['client_id'] + `\')">Rimuovi</button>
+			</div>
+			`
+
+	}	
+
+
+
+
+
+</script>

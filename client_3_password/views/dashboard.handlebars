@@ -1,0 +1,202 @@
+{{alert}}
+<div class="container-fluid">
+
+	<div class="row justify-content-md-center">
+		<div class="col col-6">
+			<div class="cardboard">
+
+				<h5>Dati sul resource server</h5><hr>
+
+				<div class="form-group row">
+					<label for="username_box" class="col-sm-4 col-md-4 col-lg-4 col-xl-4 col-form-label"><b>Nome utente: </b></label>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-xl-8">
+						<input type="test" class="form-control" id="username_box">
+					</div>
+				</div>
+
+				<div class="form-group row">
+					<label for="protected_resource_box" class="col-sm-4 col-md-4 col-lg-4 col-xl-4 col-form-label"><b>Risorsa protetta: </b></label>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-xl-8">
+						<input type="test" class="form-control" id="protected_resource_box">
+					</div>
+				</div>
+
+				<button type="button" class="btn btn-primary" id="user_info_update_btn" onClick="set_info()">Aggiorna</button>
+
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+<div class="container-fluid">
+
+	<div class="row justify-content-md-center">
+		<div class="col col-6">
+			<div class="cardboard">
+
+				<h5>Stato richieste</h5><hr>
+
+				<div class="form-group row">
+					<label for="status_username" class="col-sm-4 col-md-4 col-lg-4 col-xl-4 col-form-label"><b>Nome utente: </b></label>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-xl-8">
+						<p id="status_username"></p>
+					</div>
+				</div>
+
+				<div class="form-group row">
+					<label for="status_protected_resource" class="col-sm-4 col-md-4 col-lg-4 col-xl-4 col-form-label"><b>Risorsa protetta: </b></label>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-xl-8">
+						<p id="status_protected_resource"></p>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+
+
+<script type="text/javascript">
+
+	window.onload = function() {
+		get_info ();
+	};
+
+	function get_info (){
+
+		console.log("[*] GET info");
+
+		$.ajax({
+			type: 'POST',
+			data: { 'req_query': JSON.stringify({ "action":"basic_find", "key": "username"}) },
+			url: '/private/get_resource'
+		})
+		.done(function(data, err) {
+			
+			var jdata = JSON.parse(data)
+			if (jdata.status == "ok"){
+				document.getElementById("username_box").value = jdata.valore;
+				document.getElementById("status_username").innerHTML = "username ottenuto correttamente";
+
+			} else {
+				document.getElementById("status_username").innerHTML = "ERRORE: " + jdata.message;
+			}
+		
+		})
+		.fail(function(err) {
+			try {
+				var jerr = JSON.parse(err.responseText);
+				document.getElementById("status_username").innerHTML = "ERRORE: " + jerr['message'];
+			}
+			catch(err){ 	
+				document.getElementById("status_username").innerHTML = "ERRORE: Errore durante la richiesta";
+			}
+		})
+
+		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+		$.ajax({
+			type: 'POST',
+			data: { 'req_query': JSON.stringify({ "action":"find", "key":"protected_resource"}) },
+			url: '/private/get_resource'
+		})
+		.done(function(data, err) {
+			
+			var jdata = JSON.parse(data)
+			if (jdata.status == "ok"){
+				document.getElementById("protected_resource_box").value = jdata.valore;
+				document.getElementById("status_protected_resource").innerHTML = "risorsa protetta ottenuta correttamente";
+
+			} else {
+				document.getElementById("status_protected_resource").innerHTML = "ERRORE: " + jdata.message;
+			}
+		
+		})
+		.fail(function(err) {
+			try {
+				var jerr = JSON.parse(err.responseText);
+				document.getElementById("status_protected_resource").innerHTML = "ERRORE: " + jerr['message'];
+			}
+			catch(err){ 	
+				document.getElementById("status_protected_resource").innerHTML = "ERRORE: Errore durante la richiesta";
+			}
+		})
+
+	}
+
+
+
+	function set_info (){
+
+		console.log("[*] SET info");
+
+		var username_value = document.getElementById("username_box").value
+		var protected_resource_value = document.getElementById("protected_resource_box").value
+
+		$.ajax({
+			type: 'POST',
+			data: { 'req_query': JSON.stringify({ "action":"basic_assign", "key":"username", "valore":username_value }) },
+			url: '/private/get_resource'
+		})
+		.done(function(data, err) {
+			
+			var jdata = JSON.parse(data)
+			if (jdata.status == "ok"){
+				document.getElementById("status_username").innerHTML = "username aggiornato";
+
+			} else {
+				document.getElementById("status_username").innerHTML = "ERRORE: " + jdata.message;
+			}
+		
+		})
+		.fail(function(err) {
+			try {
+				var jerr = JSON.parse(err.responseText);
+				document.getElementById("status_username").innerHTML = "ERRORE: " + jerr['message'];
+			}
+			catch(err){ 	
+				document.getElementById("status_username").innerHTML = "ERRORE: Errore durante la richiesta";
+			}
+		})
+
+		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+		$.ajax({
+			type: 'POST',
+			data: { 'req_query':  JSON.stringify({ "action":"assign", "key":"protected_resource", "valore": protected_resource_value})  },
+			url: '/private/get_resource'
+		})
+		.done(function(data, err) {
+			
+			var jdata = JSON.parse(data)
+			if (jdata.status == "ok"){
+				document.getElementById("status_protected_resource").innerHTML = "risorsa protetta aggiornata";
+
+			} else {
+				document.getElementById("status_protected_resource").innerHTML = "ERRORE: " + jdata.message;
+			}
+		
+		})
+		.fail(function(err) {
+			try {
+				var jerr = JSON.parse(err.responseText);
+				document.getElementById("status_protected_resource").innerHTML = "ERRORE: " + jerr['message'];
+			}
+			catch(err){ 	
+				document.getElementById("status_protected_resource").innerHTML = "ERRORE: Errore durante la richiesta";
+			}
+			
+		})
+
+	}
+
+
+
+
+
+</script>

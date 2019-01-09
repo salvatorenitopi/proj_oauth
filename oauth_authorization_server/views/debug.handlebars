@@ -1,0 +1,56 @@
+{{alert}}
+
+<div style="margin-top:20px">
+	<h2 class="red-text text-center" style="color:red">DUMP DATABASE</h2>
+</div>
+
+
+<div class="container-fluid">
+
+	<div class="row justify-content-md-center">
+
+		<div id="users_div" class="col col-lg-12">
+			<div class="cardboard">
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col">Username</th>
+							<th scope="col">Password</th>
+							<th scope="col">E-Mail</th>
+						</tr>
+					</thead>
+					<tbody id="users_tbody">
+					</tbody>
+				</table>
+			</div>
+
+			<div id="applications_div" class="col col-12 cardboard">
+			</div>
+
+			<div id="authorizations_div" class="col col-12 cardboard">
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	
+	var json_payload = '{{{json_payload}}}';
+
+	var j = JSON.parse(json_payload);
+
+	for (var i = 0; i < j['users'].length; i++) {
+		console.log(j['users'][i]['id'])
+		document.getElementById("users_tbody").innerHTML += '\
+		<tr>\
+			<th scope="row">' + j['users'][i]['id'] + '</th>\
+			<td>' + j['users'][i]['username'] + '</td>\
+			<td>' + j['users'][i]['password'].substring(0, 32) + '...</td>\
+			<td>' + j['users'][i]['email'] + '</td>\
+		</tr>\
+		'
+	}
+
+
+</script>
